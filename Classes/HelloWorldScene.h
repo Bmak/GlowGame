@@ -5,6 +5,7 @@
 USING_NS_CC;
 
 class Player;
+class MapObject;
 
 class HelloWorld : public cocos2d::CCLayer
 {
@@ -27,8 +28,11 @@ public:
 
 private:
     void update(float dt);
+    bool checkCollisions();
 
     Player *_player;
+
+    MapObject *_item;
 };
 
 

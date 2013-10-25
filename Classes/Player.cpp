@@ -12,16 +12,24 @@ USING_NS_CC;
 Player::Player() { }
 
 void Player::create() {
-	_player = new CCParticleSystem();
-	_player = CCParticleMeteor::create();
-	_player->setGravity(ccp(-300,0));
-//	_player->setStartColor(ccc4f(1.0f,0,0.0f,1.0f));
-//	_player->setStartColorVar(ccc4f(0.0f,1,0.0f,0.1f));
+	_skin = new CCParticleSystem();
+	_skin = CCParticleMeteor::create();
+	_skin->setGravity(ccp(-300,0));
+	_skin->setStartColor(ccc4f(1.0f,1.0f,1.0f,1.0f));
+//	_skin->setStartColorVar(ccc4f(1.0f,1.0f,1.0f,1.0f));
 
-	_player->setStartColorVar(ccc4f(50,50,0,50));
-	_player->setEndColorVar(ccc4f(150,150,150,0));
-	_player->setStartSize(50);
-	_player->setStartSizeVar(50);
+	_skin->setEndColor(ccc4f(1.0f,1.0f,1.0f,0.1f));
+	//_skin->setEndColorVar(ccc4f(1.0f,1.0f,1.0f,1.0f));
+
+//	_skin->setStartColorVar(ccc4f(50,50,0,50));
+//	_skin->setEndColorVar(ccc4f(150,150,150,0));
+	_skin->setStartSize(50);
+	_skin->setStartSizeVar(50);
+//	CCRect rect = _skin->boundingBox();
+//	rect = new CCRect(-10,-10,20,20);
+
+	CCSize *size = new CCSize(50,50);
+	_skin->setContentSize(*size);
 
 	_speed = 500;
 	_target = CCPointZero;
@@ -29,22 +37,19 @@ void Player::create() {
 }
 
 CCParticleSystem* Player::getNode() {
-	return _player;
+	return _skin;
 }
 
 void Player::tick(float dt) {
-
 	if (_target.x != 0 || _target.y != 0) {
-		_pos = _player->getPosition();
-
-		if (_target.x == _pos.x && _target.y == _pos.y) { return; }
+		_pos = _skin->getPosition();
 
 		int dx = _target.x - _pos.x;
 		int dy = _target.y - _pos.y;
 		if (abs(dx) <= 5 && abs(dy) <= 5) { return; }
 
-		_player->setPositionX((_pos.x + _velocity.x*dt));
-		_player->setPositionY((_pos.y + _velocity.y*dt));
+		_skin->setPositionX((_pos.x + _velocity.x*dt));
+		_skin->setPositionY((_pos.y + _velocity.y*dt));
 	}
 }
 
@@ -52,7 +57,7 @@ void Player::moveTo(float tx, float ty) {
 	_target.x = tx;
 	_target.y = ty;
 
-	_pos = _player->getPosition();
+	_pos = _skin->getPosition();
 
 	float dx = _target.x - _pos.x;
 	float dy = _target.y - _pos.y;

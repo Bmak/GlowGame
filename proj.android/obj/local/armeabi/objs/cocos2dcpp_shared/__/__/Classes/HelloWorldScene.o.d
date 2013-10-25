@@ -204,7 +204,7 @@ obj/local/armeabi/objs/cocos2dcpp_shared/__/__/Classes/HelloWorldScene.o: \
  /home/probigi/development/cocos2d-x/cocos2d-x-2.2.0/projects/GlowGame/proj.android/../../../cocos2dx/support/data_support/uthash.h \
  /home/probigi/development/cocos2d-x/cocos2d-x-2.2.0/projects/GlowGame/proj.android/../../../cocos2dx/support/component/CCComponent.h \
  /home/probigi/development/cocos2d-x/cocos2d-x-2.2.0/projects/GlowGame/proj.android/../../../cocos2dx/support/component/CCComponentContainer.h \
- jni/../../Classes/Player.h
+ jni/../../Classes/Player.h jni/../../Classes/MapObject.h
 
 jni/../../Classes/HelloWorldScene.h:
 
@@ -615,3 +615,5 @@ jni/../../Classes/HelloWorldScene.h:
 /home/probigi/development/cocos2d-x/cocos2d-x-2.2.0/projects/GlowGame/proj.android/../../../cocos2dx/support/component/CCComponentContainer.h:
 
 jni/../../Classes/Player.h:
+
+jni/../../Classes/MapObject.h:

@@ -1,5 +1,6 @@
 #include "HelloWorldScene.h"
 #include "Player.h"
+#include "MapObject.h"
 
 USING_NS_CC;
 
@@ -80,6 +81,14 @@ bool HelloWorld::init()
 
     this->addChild(_player->getNode(), 1);
 
+    _item = new MapObject();
+    _item->create();
+    _item->setPosition(400,400);
+    this->addChild(_item->getNode(),1);
+
+    _item->show();
+
+
     this->setTouchEnabled(true);
     this->scheduleUpdate();
 
@@ -88,6 +97,27 @@ bool HelloWorld::init()
 
 void HelloWorld::update(float dt) {
 	_player->tick(dt);
+	_item->tick(dt);
+
+	if (checkCollisions() && _item->isLive()) {
+		CCLog("CRAAAAAASH!!!");
+		_player->getNode()->setStartColor(_item->getNode()->getStartColor());
+		_player->getNode()->setStartColorVar(_item->getNode()->getStartColorVar());
+		_player->getNode()->setEndColor(_item->getNode()->getEndColor());
+		_player->getNode()->setEndColorVar(_item->getNode()->getEndColorVar());
+
+		_item->setLive(false);
+		_item->hide();
+
+
+	}
+}
+
+bool HelloWorld::checkCollisions() {
+	CCRect rect1 = _player->getNode()->boundingBox();
+	CCRect rect2 = _item->getNode()->boundingBox();
+
+	return rect1.intersectsRect(rect2);
 }
 
 

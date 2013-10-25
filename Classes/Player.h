@@ -22,7 +22,7 @@ public:
 	void setVelocity(float vx, float vy);
 
 private:
-	CCParticleSystem *_player;
+	CCParticleSystem *_skin;
 	int _speed;
 	CCPoint _velocity;
 	CCPoint _target;
