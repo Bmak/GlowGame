@@ -202,7 +202,8 @@ obj/local/armeabi/objs/cocos2dcpp_shared/__/__/Classes/MapObject.o: \
  /home/probigi/development/cocos2d-x/cocos2d-x-2.2.0/projects/GlowGame/proj.android/../../../cocos2dx/CCScheduler.h \
  /home/probigi/development/cocos2d-x/cocos2d-x-2.2.0/projects/GlowGame/proj.android/../../../cocos2dx/support/data_support/uthash.h \
  /home/probigi/development/cocos2d-x/cocos2d-x-2.2.0/projects/GlowGame/proj.android/../../../cocos2dx/support/component/CCComponent.h \
- /home/probigi/development/cocos2d-x/cocos2d-x-2.2.0/projects/GlowGame/proj.android/../../../cocos2dx/support/component/CCComponentContainer.h
+ /home/probigi/development/cocos2d-x/cocos2d-x-2.2.0/projects/GlowGame/proj.android/../../../cocos2dx/support/component/CCComponentContainer.h \
+ jni/../../Classes/GameScene.h
 
 jni/../../Classes/MapObject.h:
 
@@ -611,3 +612,5 @@ jni/../../Classes/MapObject.h:
 /home/probigi/development/cocos2d-x/cocos2d-x-2.2.0/projects/GlowGame/proj.android/../../../cocos2dx/support/component/CCComponent.h:
 
 /home/probigi/development/cocos2d-x/cocos2d-x-2.2.0/projects/GlowGame/proj.android/../../../cocos2dx/support/component/CCComponentContainer.h:
+
+jni/../../Classes/GameScene.h:

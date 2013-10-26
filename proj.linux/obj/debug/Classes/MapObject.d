@@ -163,4 +163,5 @@ obj/debug/Classes/MapObject.o: ../Classes/MapObject.cpp \
  ../../../cocos2dx/CCScheduler.h \
  ../../../cocos2dx/support/data_support/uthash.h \
  ../../../cocos2dx/support/component/CCComponent.h \
- ../../../cocos2dx/support/component/CCComponentContainer.h
+ ../../../cocos2dx/support/component/CCComponentContainer.h \
+ ../Classes/GameScene.h

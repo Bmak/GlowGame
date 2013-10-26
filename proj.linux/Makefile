@@ -4,7 +4,7 @@ INCLUDES = -I.. -I../Classes
 
 SOURCES = main.cpp \
         ../Classes/AppDelegate.cpp \
-        ../Classes/HelloWorldScene.cpp \
+        ../Classes/GameScene.cpp \
 	../Classes/Player.cpp \
 	../../Classes/MapObject.cpp \
 

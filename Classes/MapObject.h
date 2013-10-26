@@ -14,18 +14,28 @@ USING_NS_CC;
 class MapObject : public CCSprite {
 public:
 	MapObject();
+	virtual ~MapObject();
 
-	void create();
-	void initOptions();
+	void create(int type);
+
 	CCParticleSystem* getNode();
 	void tick(float dt);
 	void setPosition(float x, float y);
+
 	void show();
 	void hide();
+
 	bool isLive();
 	void setLive(bool b);
 
+	void redraw();
+
+
 private:
+	void initOptions();
+	void setRandomPos();
+
+	int _type;
 	bool _isLive;
 	CCParticleSystem *_skin;
 	CCPoint _pos;

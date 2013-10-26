@@ -6,31 +6,26 @@
  */
 
 #include "MapObject.h"
+#include "GameScene.h"
 
 USING_NS_CC;
 
-MapObject::MapObject() {
+MapObject::MapObject() { }
+MapObject::~MapObject() {
+	delete _skin;
 }
 
-void MapObject::create() {
+
+
+
+void MapObject::create(int type) {
+	_type = type;
+
 	_skin = new CCParticleSystem();
-	_skin = CCParticleMeteor::create();
-	_skin->setGravity(ccp(0,0));
+	_skin = CCParticleSun::create();
 	initOptions();
+	setRandomPos();
 
-	/*
-	//_skin->setEmitterMode(kCCParticleModeRadius);
-
-	_skin->setStartColor(ccc4f(0.0f,1,0.0f,1.0f));
-	_skin->setStartColorVar(ccc4f(0.5f,0.1f,0.0f,0.1f));
-
-//	_skin->setStartColorVar(ccc4f(50,50,0,50));
-//	_skin->setEndColorVar(ccc4f(150,150,150,0));
-	CCSize *size = new CCSize(30,30);
-	_skin->setContentSize(*size);
-	_skin->setStartSize(30);
-	_skin->setStartSizeVar(30);
-*/
 	_skin->setScale(0);
 
 	_lifeTime = 500;
@@ -38,13 +33,48 @@ void MapObject::create() {
 }
 
 void MapObject::initOptions() {
-	_skin->setStartColor(ccc4f(0.0f,1,0.0f,1.0f));
-	_skin->setStartColorVar(ccc4f(0.5f,0.1f,0.0f,0.1f));
+	_skin->setSpeed(20);
+	_skin->setLife(1);
+	_skin->setLifeVar(0.5f);
 
-	CCSize *size = new CCSize(30,30);
+
+	switch(_type) {
+	case 0:
+		_skin->setStartColor(ccc4f(0.0f,1.0f,0.0f,1.0f));
+		_skin->setStartColorVar(ccc4f(0.5f,0.1f,0.0f,0.1f));
+		break;
+	case 1:
+		_skin->setStartColor(ccc4f(1.0f,0.0f,0.0f,1.0f));
+		_skin->setStartColorVar(ccc4f(0.1f,0.5f,0.0f,0.1f));
+		break;
+	case 2:
+		_skin->setStartColor(ccc4f(0.0f,0.0f,1.0f,1.0f));
+		_skin->setStartColorVar(ccc4f(0.0f,0.3f,0.1f,0.1f));
+		break;
+	}
+
+
+	CCSize *size = new CCSize(20,20);
 	_skin->setContentSize(*size);
 	_skin->setStartSize(30);
 	_skin->setStartSizeVar(30);
+
+	delete size;
+}
+
+void MapObject::redraw() {
+	_isLive = true;
+	_lifeTime = 500;
+	initOptions();
+	setRandomPos();
+	show();
+}
+
+void MapObject::setRandomPos() {
+	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+	int x = _skin->getContentSize().width/2 + CCRANDOM_0_1()*(winSize.width - _skin->getContentSize().width/2);
+	int y = _skin->getContentSize().height/2 + CCRANDOM_0_1()*(winSize.height - _skin->getContentSize().height/2);
+	_skin->setPosition(x,y);
 }
 
 CCParticleSystem* MapObject::getNode() {
@@ -60,11 +90,11 @@ void MapObject::setLive(bool b) {
 }
 
 void MapObject::tick(float dt) {
-	//_lifeTime -= dt;
+	return;
+	_lifeTime -= dt;
 	if (_lifeTime <= 0 && _isLive) {
 		_isLive = false;
 		hide();
-		//CCLog("TIME IS UP!!! - ITEM DEAD");
 	}
 }
 
@@ -77,10 +107,6 @@ void MapObject::setPosition(float x, float y) {
 void MapObject::show() {
 	CCLog("SHOW ITEM");
 	CCScaleTo *actionScale = CCScaleTo::create(1,1);
-
-//	CCCallFuncN* callback = CCCallFuncN::create(_callbackTarget, _onMoveToPointCompleteFunc);
-//	CCFiniteTimeAction* action = CCSequence::create(moveAction, callback, NULL);
-
 	_skin->runAction(actionScale);
 }
 
@@ -100,7 +126,12 @@ void MapObject::hide() {
 	_skin->setLife(0.2);
 	_skin->setLifeVar(0.2);
 
-	//CCScaleTo *actionScale = CCScaleTo::create(1,0);
+	CCScaleTo *actionScale = CCScaleTo::create(1,0);
 
-//	_skin->runAction(actionScale);
+	SEL_CallFuncN callFunc = callfuncN_selector(MapObject::redraw);
+
+	CCCallFuncN* callback = CCCallFuncN::create(this, callFunc);
+	CCFiniteTimeAction* action = CCSequence::create(actionScale, callback, NULL);
+
+	_skin->runAction(action);
 }

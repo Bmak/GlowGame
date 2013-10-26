@@ -28,12 +28,14 @@ void Player::create() {
 //	CCRect rect = _skin->boundingBox();
 //	rect = new CCRect(-10,-10,20,20);
 
-	CCSize *size = new CCSize(50,50);
+	CCSize *size = new CCSize(30,30);
 	_skin->setContentSize(*size);
 
 	_speed = 500;
 	_target = CCPointZero;
 	_velocity = CCPointZero;
+
+	delete size;
 }
 
 CCParticleSystem* Player::getNode() {
