@@ -35,6 +35,8 @@ private:
 	void initOptions();
 	void setRandomPos();
 
+	ccColor4F setRandomColor();
+
 	int _type;
 	bool _isLive;
 	CCParticleSystem *_skin;

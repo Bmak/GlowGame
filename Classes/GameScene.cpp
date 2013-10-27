@@ -57,7 +57,7 @@ bool GameScene::init()
     // add a label shows "Hello World"
     // create and initialize a label
     
-    CCLabelTTF* pLabel = CCLabelTTF::create("Hello World", "Arial", 24);
+    CCLabelTTF* pLabel = CCLabelTTF::create("GLOW", "Arial", 24);
     
     // position the label on the center of the screen
     pLabel->setPosition(ccp(origin.x + visibleSize.width/2,
@@ -91,22 +91,11 @@ bool GameScene::init()
 //    ex1 = CCParticleSun::create();
 //	this->addChild(ex1);
 
-
-
-
     _player = new Player();
     _player->create();
 
-    this->addChild(_player->getNode(), 1);
-
-/*
-    _item = new MapObject();
-    _item->create(1);
-    _item->setPosition(400,400);
-    this->addChild(_item->getNode(),1);
-
-    _item->show();
-*/
+    CCParticleSystem* node = _player->getNodes()->front();
+	this->addChild(node, 1);
 
     NUM_ITEMS = 3;
 
@@ -132,12 +121,9 @@ void GameScene::update(float dt) {
 		MapObject *item = _items->at(i);
 		item->tick(dt);
 
-		if (checkCollisions(item) && item->isLive()) {
-			CCLog("CRAAAAAASH!!!");
-			_player->getNode()->setStartColor(item->getNode()->getStartColor());
-			_player->getNode()->setStartColorVar(item->getNode()->getStartColorVar());
-			_player->getNode()->setEndColor(item->getNode()->getEndColor());
-			_player->getNode()->setEndColorVar(item->getNode()->getEndColorVar());
+		int coll = checkCollisions(item);
+		if (coll != -1 && item->isLive()) {
+			_player->setSkin(coll, item->getNode());
 
 			item->setLive(false);
 			item->hide();
@@ -145,11 +131,16 @@ void GameScene::update(float dt) {
 	}
 }
 
-bool GameScene::checkCollisions(MapObject *item) {
-	CCRect rect1 = _player->getNode()->boundingBox();
-	CCRect rect2 = item->getNode()->boundingBox();
-
-	return rect1.intersectsRect(rect2);
+int GameScene::checkCollisions(MapObject *item) {
+	CCRect rect1 = item->getNode()->boundingBox();
+	int size = _player->getNodes()->size();
+	for (int i = 0; i < size; ++i) {
+		CCRect rect2 = _player->getNodes()->at(i)->boundingBox();
+		if (rect2.intersectsRect(rect1)) {
+			return i;
+		}
+	}
+	return -1;
 }
 
 void GameScene::deleteItem() {
@@ -168,10 +159,39 @@ void GameScene::ccTouchesMoved(CCSet *pTouches, CCEvent *pEvent)
 
 void GameScene::ccTouchesEnded(CCSet *pTouches, CCEvent *pEvent)
 {
-	CCTouch *touch = (CCTouch*)pTouches->anyObject();
+	int size = pTouches->count();
+	if (size > 3) { size = 3; }
+	int nodes = _player->getNodes()->size();
+	if (size > 1) {
+		if (nodes < size) {
+			int len = size - nodes;
+			for (int j = 0; j < len; ++j) {
+				_player->addSkin();
+			}
+		}
+		_player->activeTouches = size;
 
-	CCPoint target = touch->getLocation();
-	_player->moveTo(target.x,target.y);
+		int i = 0;
+
+		for(CCSetIterator it = pTouches->begin(); it != pTouches->end(); ++it)
+		{
+			CCTouch *touch = (CCTouch*) *it;
+			CCPoint target = touch->getLocation();
+
+			_player->moveTo(i, target.x,target.y);
+			i++;
+		}
+
+	} else {
+		CCTouch *touch = (CCTouch*)pTouches->anyObject();
+
+		CCPoint target = touch->getLocation();
+
+		_player->moveTo(0, target.x,target.y);
+		_player->activeTouches = 1;
+
+	}
+
 
     //CCTouch *touch = (CCTouch*)pTouches->anyObject();
 

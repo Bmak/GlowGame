@@ -38,21 +38,25 @@ void MapObject::initOptions() {
 	_skin->setLifeVar(0.5f);
 
 
+	/*
 	switch(_type) {
 	case 0:
 		_skin->setStartColor(ccc4f(0.0f,1.0f,0.0f,1.0f));
-		_skin->setStartColorVar(ccc4f(0.5f,0.1f,0.0f,0.1f));
+//		_skin->setStartColorVar(ccc4f(0.5f,0.1f,0.0f,0.1f));
+
 		break;
 	case 1:
 		_skin->setStartColor(ccc4f(1.0f,0.0f,0.0f,1.0f));
-		_skin->setStartColorVar(ccc4f(0.1f,0.5f,0.0f,0.1f));
+//		_skin->setStartColorVar(ccc4f(0.1f,0.5f,0.0f,0.1f));
 		break;
 	case 2:
 		_skin->setStartColor(ccc4f(0.0f,0.0f,1.0f,1.0f));
-		_skin->setStartColorVar(ccc4f(0.0f,0.3f,0.1f,0.1f));
+//		_skin->setStartColorVar(ccc4f(0.0f,0.3f,0.1f,0.1f));
 		break;
-	}
-
+	}*/
+//	_skin->setStartColor(setRandomColor());
+	_skin->setStartColor(setRandomColor());
+	_skin->setStartColorVar(setRandomColor());
 
 	CCSize *size = new CCSize(20,20);
 	_skin->setContentSize(*size);
@@ -61,6 +65,23 @@ void MapObject::initOptions() {
 
 	delete size;
 }
+
+
+ccColor4F MapObject::setRandomColor() {
+	float myRand = CCRANDOM_0_1();
+	CCLog("random %f", myRand);
+
+	if (myRand > 0 && myRand <= 0.25) {
+		return ccc4f((0.4f + CCRANDOM_0_1()), 0,0,1);
+	} else if (myRand > 0.25 && myRand <= 0.5) {
+		return ccc4f(0, (0.4f + CCRANDOM_0_1()),0,1);
+	} else if (myRand > 0.5 && myRand <= 0.75) {
+		return ccc4f(0, 0,(0.4f + CCRANDOM_0_1()),1);
+	} else {
+		return ccc4f((0.4f + CCRANDOM_0_1()),(0.4f + CCRANDOM_0_1()),(0.4f + CCRANDOM_0_1()),1.0f);
+	}
+}
+
 
 void MapObject::redraw() {
 	_isLive = true;
@@ -90,7 +111,6 @@ void MapObject::setLive(bool b) {
 }
 
 void MapObject::tick(float dt) {
-	return;
 	_lifeTime -= dt;
 	if (_lifeTime <= 0 && _isLive) {
 		_isLive = false;

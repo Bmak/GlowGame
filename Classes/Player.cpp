@@ -9,70 +9,146 @@
 
 USING_NS_CC;
 
-Player::Player() { }
+Player::Player() {
+}
 
 void Player::create() {
-	_skin = new CCParticleSystem();
-	_skin = CCParticleMeteor::create();
-	_skin->setGravity(ccp(-300,0));
-	_skin->setStartColor(ccc4f(1.0f,1.0f,1.0f,1.0f));
-//	_skin->setStartColorVar(ccc4f(1.0f,1.0f,1.0f,1.0f));
-
-	_skin->setEndColor(ccc4f(1.0f,1.0f,1.0f,0.1f));
-	//_skin->setEndColorVar(ccc4f(1.0f,1.0f,1.0f,1.0f));
-
-//	_skin->setStartColorVar(ccc4f(50,50,0,50));
-//	_skin->setEndColorVar(ccc4f(150,150,150,0));
-	_skin->setStartSize(50);
-	_skin->setStartSizeVar(50);
-//	CCRect rect = _skin->boundingBox();
-//	rect = new CCRect(-10,-10,20,20);
-
-	CCSize *size = new CCSize(30,30);
-	_skin->setContentSize(*size);
+	//if (_skins == NULL) {
+		_skins = new std::vector<CCParticleSystem*>();
+	//}
 
 	_speed = 500;
-	_target = CCPointZero;
-	_velocity = CCPointZero;
+
+	//if (_velocityes== NULL) {
+		_velocityes = new std::vector<CCPoint*>();
+	//}
+	//if (_targets== NULL) {
+		_targets = new std::vector<CCPoint*>();
+	//}
+
+	activeTouches = 1;
+
+	addSkin();
+}
+
+void Player::addSkin() {
+	CCParticleSystem* skin = new CCParticleSystem();
+	skin = CCParticleMeteor::create();
+	skin->setStartColor(ccc4f(1,1,1,1));
+	skin->setGravity(ccp(-200,0));
+	skin->setStartSize(50);
+	skin->setStartSizeVar(50);
+	CCSize *size = new CCSize(30, 30);
+	skin->setContentSize(*size);
+
+	_skins->push_back(skin);
+
+	CCPoint *v = new CCPoint(0,0);
+	CCPoint *t = new CCPoint(0,0);
+	_velocityes->push_back(v);
+	_targets->push_back(t);
+
+	if (_skins->size() > 1) {
+		CCParticleSystem* first = _skins->front();
+		skin->setPosition(first->getPosition());
+		first->getParent()->addChild(skin);
+	}
 
 	delete size;
 }
 
-CCParticleSystem* Player::getNode() {
-	return _skin;
+void Player::removeSkin(int id) {
+	CCParticleSystem *skin = _skins->at(id);
+	skin->setAutoRemoveOnFinish(true);
+	skin->stopSystem();
+	_skins->erase(_skins->begin()+id);
+	_targets->erase(_targets->begin() + id);
+	_velocityes->erase(_velocityes->begin() + id);
+}
+
+std::vector<CCParticleSystem*>* Player::getNodes() {
+	return _skins;
 }
 
 void Player::tick(float dt) {
-	if (_target.x != 0 || _target.y != 0) {
-		_pos = _skin->getPosition();
+//	int size = _skins->size();
+	for (unsigned i = 0; i < _skins->size(); ++i) {
+		CCParticleSystem* skin = _skins->at(i);
+		if (activeTouches == 1 && i > 0) {
+			CCParticleSystem* first = _skins->at(0);
+			moveTo(i, first->getPositionX(), first->getPositionY());
+			if (checkClonePos(i)) {
+				removeSkin(i);
+				i--;
+				continue;
+			}
+		}
+		CCPoint* target = _targets->at(i);
+		CCPoint* velocity = _velocityes->at(i);
 
-		int dx = _target.x - _pos.x;
-		int dy = _target.y - _pos.y;
-		if (abs(dx) <= 5 && abs(dy) <= 5) { return; }
+		//if (target->x != 0 || target->y != 0) {
+			CCPoint pos = skin->getPosition();
 
-		_skin->setPositionX((_pos.x + _velocity.x*dt));
-		_skin->setPositionY((_pos.y + _velocity.y*dt));
+			int dx = target->x - pos.x;
+			int dy = target->y - pos.y;
+			if (abs(dx) <= 5 && abs(dy) <= 5) {
+				continue;
+			}
+
+			skin->setPositionX((pos.x + velocity->x * dt));
+			skin->setPositionY((pos.y + velocity->y * dt));
+		//}
 	}
 }
 
-void Player::moveTo(float tx, float ty) {
-	_target.x = tx;
-	_target.y = ty;
+bool Player::checkClonePos(int id) {
+	CCParticleSystem *front = _skins->at(0);
+	CCParticleSystem *skin = _skins->at(id);
 
-	_pos = _skin->getPosition();
+	CCPoint pos = skin->getPosition();
+	int dx = front->getPositionX() - pos.x;
+	int dy = front->getPositionY() - pos.y;
+	if (abs(dx) <= 10 && abs(dy) <= 10) {
+		return true;
+	}
+	return false;
+}
 
-	float dx = _target.x - _pos.x;
-	float dy = _target.y - _pos.y;
+void Player::setSkin(int id, CCParticleSystem *item) {
+	//for (int i = 0; i < _skins->size(); ++i) {
+		CCParticleSystem* skin = _skins->at(id);
+		skin->setStartColor(item->getStartColor());
+		skin->setStartColorVar(item->getStartColorVar());
+		skin->setEndColor(item->getEndColor());
+		skin->setEndColorVar(item->getEndColorVar());
+	//}
+}
 
-	float h = (float) sqrt( (double) (dx * dx + dy * dy) );
+void Player::moveTo(int id, float tx, float ty) {
+	CCParticleSystem* skin = _skins->at(id);
+	if (skin == NULL) { return; }
+	CCPoint* target = _targets->at(id);
+
+	target->x = tx;
+	target->y = ty;
+
+	CCPoint pos = skin->getPosition();
+
+	float dx = target->x - pos.x;
+	float dy = target->y - pos.y;
+
+	float h = (float) sqrt((double) (dx * dx + dy * dy));
 	float vx = dx / h * _speed;
 	float vy = dy / h * _speed;
 
-	setVelocity(vx,vy);
+	setVelocity(id, vx, vy);
 }
 
-void Player::setVelocity(float vx, float vy) {
-	_velocity.x = vx;
-	_velocity.y = vy;
+void Player::setVelocity(int id, float vx, float vy) {
+	CCPoint *velocity = _velocityes->at(id);
+	if (velocity == NULL) { return; }
+
+	velocity->x = vx;
+	velocity->y = vy;
 }
 

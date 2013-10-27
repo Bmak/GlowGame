@@ -32,7 +32,7 @@ public:
 
 private:
     void update(float dt);
-    bool checkCollisions(MapObject *item);
+    int checkCollisions(MapObject *item);
 
     int NUM_ITEMS;
 

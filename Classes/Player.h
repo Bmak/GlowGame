@@ -16,17 +16,24 @@ public:
 	Player();
 
 	void create();
-	CCParticleSystem* getNode();
+	void addSkin();
+	void removeSkin(int id);
+	std::vector<CCParticleSystem*>* getNodes();
 	void tick(float dt);
-	void moveTo(float tx, float ty);
-	void setVelocity(float vx, float vy);
+	void moveTo(int id, float tx, float ty);
+	void setVelocity(int id, float vx, float vy);
+	void setSkin(int id, CCParticleSystem* item);
+
+	int activeTouches;
 
 private:
-	CCParticleSystem *_skin;
+	bool checkClonePos(int id);
+
+
+	std::vector<CCParticleSystem*> *_skins;
 	int _speed;
-	CCPoint _velocity;
-	CCPoint _target;
-	CCPoint _pos;
+	std::vector<CCPoint*> *_velocityes;
+	std::vector<CCPoint*> *_targets;
 };
 
 #endif /* PLAYER_H_ */
