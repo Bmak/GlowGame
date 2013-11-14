@@ -26,9 +26,21 @@ public:
 
 	int activeTouches;
 
+	//for aster prototype
+	void redraw();
+	void updateAsterPosition();
+	void setRandomColorForSkin(int id);
+	void checkForRemove();
+	void clearSkin(CCNode *skin);
+
+	bool isLive;
+
+
 private:
 	bool checkClonePos(int id);
 
+	int _viewSize;
+	int _rectSize;
 
 	std::vector<CCParticleSystem*> *_skins;
 	int _speed;

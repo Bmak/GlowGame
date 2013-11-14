@@ -91,13 +91,14 @@ bool GameScene::init()
 //    ex1 = CCParticleSun::create();
 //	this->addChild(ex1);
 
-    _player = new Player();
-    _player->create();
+    //_player = new Player();
+    //_player->create();
 
-    CCParticleSystem* node = _player->getNodes()->front();
-	this->addChild(node, 1);
+    //CCParticleSystem* node = _player->getNodes()->front();
+	//this->addChild(node, 1);
 
-    NUM_ITEMS = 3;
+    NUM_ITEMS = 0;
+    MAX_TOUCHES = 3;
 
 	_items = new std::vector<MapObject*>();
 	for (int i = 0; i < NUM_ITEMS; ++i) {
@@ -108,6 +109,18 @@ bool GameScene::init()
 		item->show();
 	}
 
+	MAX_ASTERS = 10;
+
+	_asteroids = new std::vector<Player*>();
+	for (int i = 0; i < MAX_ASTERS; ++i) {
+		Player *aster = new Player();
+		aster->create();
+		CCParticleSystem* node = aster->getNodes()->front();
+		this->addChild(node);
+		_asteroids->push_back(aster);
+		aster->redraw();
+	}
+
     this->setTouchEnabled(true);
     this->scheduleUpdate();
 
@@ -115,36 +128,46 @@ bool GameScene::init()
 }
 
 void GameScene::update(float dt) {
-	_player->tick(dt);
+	/*_player->tick(dt);
 
 	for (int i = 0; i < NUM_ITEMS; ++i) {
 		MapObject *item = _items->at(i);
 		item->tick(dt);
 
-		int coll = checkCollisions(item);
-		if (coll != -1 && item->isLive()) {
-			_player->setSkin(coll, item->getNode());
+		int id = checkCollisions(item);
+		if (id != -1 && item->isLive()) {
+			_player->setSkin(id, item->getNode());
 
 			item->setLive(false);
 			item->hide();
+		}
+	}*/
+
+	for (int i = 0; i < MAX_ASTERS; ++i) {
+		Player* aster = _asteroids->at(i);
+		aster->tick(dt);
+
+		aster->checkForRemove();
+
+		if (!aster->isLive) {
+			aster->removeSkin(0);
+			aster->addSkin();
+			CCParticleSystem* node = aster->getNodes()->front();
+			this->addChild(node);
+			aster->redraw();
 		}
 	}
 }
 
 int GameScene::checkCollisions(MapObject *item) {
 	CCRect rect1 = item->getNode()->boundingBox();
-	int size = _player->getNodes()->size();
-	for (int i = 0; i < size; ++i) {
+	for (unsigned i = 0; i < _player->getNodes()->size(); ++i) {
 		CCRect rect2 = _player->getNodes()->at(i)->boundingBox();
 		if (rect2.intersectsRect(rect1)) {
 			return i;
 		}
 	}
 	return -1;
-}
-
-void GameScene::deleteItem() {
-	CCLog("WTF!!!!");
 }
 
 void GameScene::ccTouchesBegan(CCSet *pTouches, CCEvent *pEvent)
@@ -159,29 +182,48 @@ void GameScene::ccTouchesMoved(CCSet *pTouches, CCEvent *pEvent)
 
 void GameScene::ccTouchesEnded(CCSet *pTouches, CCEvent *pEvent)
 {
-	int size = pTouches->count();
-	if (size > 3) { size = 3; }
-	int nodes = _player->getNodes()->size();
-	if (size > 1) {
-		if (nodes < size) {
-			int len = size - nodes;
+	for(CCSetIterator it = pTouches->begin(); it != pTouches->end(); ++it)
+	{
+		CCTouch *touch = (CCTouch*) *it;
+		CCPoint target = touch->getLocation();
+
+		for (int i = 0; i < MAX_ASTERS; ++i) {
+			Player *aster = _asteroids->at(i);
+			if (!aster->isLive) { continue; }
+			CCRect rect = aster->getNodes()->at(0)->boundingBox();
+			if (rect.containsPoint(target)) {
+				aster->isLive = false;
+			}
+		}
+	}
+}
+
+/*
+void GameScene::ccTouchesEnded(CCSet *pTouches, CCEvent *pEvent)
+{
+	int count = pTouches->count();
+	if (count > MAX_TOUCHES) { count = MAX_TOUCHES; }
+	if (count > 1) {
+		int nodes = _player->getNodes()->size();
+		if (nodes < count) {
+			int len = count - nodes;
 			for (int j = 0; j < len; ++j) {
 				_player->addSkin();
 			}
 		}
-		_player->activeTouches = size;
+		_player->activeTouches = count;
 
 		int i = 0;
 
 		for(CCSetIterator it = pTouches->begin(); it != pTouches->end(); ++it)
 		{
+			if (i >= MAX_TOUCHES) { break; }
 			CCTouch *touch = (CCTouch*) *it;
 			CCPoint target = touch->getLocation();
 
 			_player->moveTo(i, target.x,target.y);
 			i++;
 		}
-
 	} else {
 		CCTouch *touch = (CCTouch*)pTouches->anyObject();
 
@@ -189,31 +231,10 @@ void GameScene::ccTouchesEnded(CCSet *pTouches, CCEvent *pEvent)
 
 		_player->moveTo(0, target.x,target.y);
 		_player->activeTouches = 1;
-
 	}
 
-
-    //CCTouch *touch = (CCTouch*)pTouches->anyObject();
-
-    //CCPoint location = touch->getLocation();
-
-    //CCPoint pos = CCPointZero;
-    /*
-    if (m_background)
-    {
-        pos = m_background->convertToWorldSpace(CCPointZero);
-    }
-	*/
-	/*
-    if (_player != NULL)
-    {
-    	//_player->setPosition( ccpSub(location, pos) );
-    	CCMoveTo* moveAction = CCMoveTo::create(.5, location);
-    	_player->runAction(moveAction);
-
-    }*/
 }
-
+*/
 
 void GameScene::menuCloseCallback(CCObject* pSender)
 {

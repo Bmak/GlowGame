@@ -25,8 +25,6 @@ public:
 	virtual void ccTouchesMoved(CCSet *pTouches, CCEvent *pEvent);
 	virtual void ccTouchesEnded(CCSet *pTouches, CCEvent *pEvent);
 
-	void deleteItem();
-
     // implement the "static node()" method manually
     CREATE_FUNC(GameScene);
 
@@ -35,8 +33,11 @@ private:
     int checkCollisions(MapObject *item);
 
     int NUM_ITEMS;
+    int MAX_TOUCHES;
+    int MAX_ASTERS;
 
     std::vector<MapObject*> *_items;
+    std::vector<Player*> *_asteroids;
 
 
     Player *_player;

@@ -69,7 +69,7 @@ void MapObject::initOptions() {
 
 ccColor4F MapObject::setRandomColor() {
 	float myRand = CCRANDOM_0_1();
-	CCLog("random %f", myRand);
+	//CCLog("random %f", myRand);
 
 	if (myRand > 0 && myRand <= 0.25) {
 		return ccc4f((0.4f + CCRANDOM_0_1()), 0,0,1);
@@ -125,23 +125,14 @@ void MapObject::setPosition(float x, float y) {
 }
 
 void MapObject::show() {
-	CCLog("SHOW ITEM");
+	//CCLog("SHOW ITEM");
 	CCScaleTo *actionScale = CCScaleTo::create(1,1);
 	_skin->runAction(actionScale);
 }
 
 void MapObject::hide() {
-	CCLog("HIDE ITEM");
-	/*
-	_skin->cleanup();
-	CCNode *parent = _skin->getParent();
-	parent->removeChild(_skin);
-	_skin = CCParticleExplosion::create();
-	initOptions();
-//	_skin->setSpeed(200);
-	_skin->setSpeedVar(200);
-	_skin->setPosition(_pos);
-	parent->addChild(_skin);*/
+	//CCLog("HIDE ITEM");
+
 	_skin->setSpeed(300);
 	_skin->setLife(0.2);
 	_skin->setLifeVar(0.2);
