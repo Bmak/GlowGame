@@ -191,6 +191,12 @@ void GameScene::ccTouchesEnded(CCSet *pTouches, CCEvent *pEvent)
 			Player *aster = _asteroids->at(i);
 			if (!aster->isLive) { continue; }
 			CCRect rect = aster->getNodes()->at(0)->boundingBox();
+            
+            //увеличиваем радиус тача для удобства.
+            //TODO Перенести в класс Скина
+            float rectW = rect.getMaxX() - rect.getMinX();
+            float rectH = rect.getMaxY() - rect.getMinY();
+            rect.setRect(rect.getMinX() - rectW, rect.getMinY() - rectH, rectW * 3, rectH * 3);
 			if (rect.containsPoint(target)) {
 				aster->isLive = false;
 			}
