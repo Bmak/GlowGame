@@ -11,7 +11,7 @@
 #include "cocos2d.h"
 USING_NS_CC;
 
-class Player {
+class Player : public CCObject {
 public:
 	Player();
 

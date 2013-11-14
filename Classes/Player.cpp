@@ -24,9 +24,9 @@ void Player::create() {
 
 void Player::addSkin() {
 	isLive = true;
-	_speed = 50 + CCRANDOM_0_1()*300;
+	_speed = 30 + CCRANDOM_0_1()*300;
 	_viewSize = 40 + CCRANDOM_0_1()*30;
-	_rectSize = _viewSize;
+	_rectSize = _viewSize*2.5;
 
 	CCParticleSystem* skin = new CCParticleSystem();
 	skin = CCParticleMeteor::create();
@@ -38,7 +38,8 @@ void Player::addSkin() {
 	skin->setStartSizeVar(_viewSize);
 	CCSize *size = new CCSize(_rectSize, _rectSize);
 	skin->setContentSize(*size);
-
+	skin->setStartSize(_viewSize);
+		skin->setStartSizeVar(_viewSize);
 	_skins->push_back(skin);
 
 	CCPoint *v = new CCPoint(0,0);
@@ -62,6 +63,9 @@ void Player::removeSkin(int id) {
 	_targets->erase(_targets->begin() + id);
 	_velocityes->erase(_velocityes->begin() + id);
 
+
+	skin->setStartSize(_viewSize*2);
+	skin->setStartSizeVar(_viewSize*2);
 	skin->setSpeed(300);
 	skin->setLife(0.2);
 	skin->setLifeVar(0.2);
